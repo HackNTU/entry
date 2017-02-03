@@ -33,13 +33,29 @@ a {
     color: #fff94f;
 }
 
-#command {
+#command, #password {
     display: block;
     background: transparent;
     color: transparent;
     outline: none;
     border: none;
     width: 0px;
+}
+
+.text {
+    background: transparent;
+    outline: none;
+    border: none;
+
+    color: transparent;
+    text-shadow: 0 0 0 white;
+    font-family: courier, monaco, monospace;
+    font-size: 14px;
+
+    &:focus {
+        outline: none;
+    }
+
 }
 
 #cursor {

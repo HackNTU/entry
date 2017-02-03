@@ -3,6 +3,7 @@
 
 <head>
     <title>HackNTU</title>
+    <link rel="manifest" href="/manifest.json">
     <meta property="og:title" content="HackNTU" />
     <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
 </head>
@@ -22,6 +23,19 @@
     
     </div>
     
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
+    <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyClEkIipGpcwQVvKD-qfhjdBdQXGI5wkjc",
+        authDomain: "hackntu-major.firebaseapp.com",
+        databaseURL: "https://hackntu-major.firebaseio.com",
+        storageBucket: "hackntu-major.appspot.com",
+        messagingSenderId: "922847429839"
+    };
+    firebase.initializeApp(config);
+    </script>
     <!--<script src="https://unpkg.com/vue/dist/vue.js"></script>-->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="javascripts/typed.min.js"></script>
