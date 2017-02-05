@@ -192,6 +192,22 @@ var law = {
             })
             doneCommand()
         }
+    },
+    dog: {
+        reg: /^dog.*$/,
+        exec: function(command) {
+            let target = "<div class='cmd'><pre>"
+            ascii['dog'].forEach((line, idx, array) => {
+                target += line
+                if (idx === 3) {
+                    target += '&nbsp;&nbsp;' + command.split(' ').slice(1).join(' ')
+                }
+                target += '\n'
+            })
+            target += "</pre></div>"
+            $('#console').append(target)
+            doneCommand()
+        }
     }
 }
 
@@ -260,6 +276,28 @@ var ascii = {
          ,"|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//"
          ,"&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// "
          ,"&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
+    dog: [  "                                 ,:'/   _...       ",
+            "                                // ( `\"\"-.._.'     ",
+            "                                \\| /    6\\___       /",
+            "                                |     6      4     ",
+            "                                |            /      \\",
+            "                                \\_       .--'      ",
+            "                                (_\'---\'`)          ",
+            "                                / `\'---`()         ",
+            "                              ,\'        |          ",
+            "              ,            .\'`          |          ",
+            "              )\       _.-\'             ;          ",
+            "             / |    .\'`   _            /           ",
+            "           /` /   .\'       '.        , |           ",
+            "          /  /   /           \   ;   | |           ",
+            "          |  \  |            |  .|   | |           ",
+            "           \  `\"|           /.-\' |   | |           ",
+            "            '-..-\       _.;.._  |   |.;-.         ",
+            "                  \    <`.._  )) |  .;-. ))        ",
+            "                  (__.  `  ))-\'  \_    ))'         ",
+            "                      `\'--\"`  jgs  `\"\"\"`           "
+            ]
+
 
 };
 
