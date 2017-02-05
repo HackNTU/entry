@@ -178,6 +178,20 @@ var law = {
     login: {
         reg: /^login$/,
         exec: loginGoogle
+    },
+    cat: {
+        reg: /^cat.*$/,
+        exec: function(command) {
+            ascii['cat'].forEach((line, idx, array) => {
+                if (idx === 3) {
+                    let sentence = command.split(' ').slice(1).join(' ')
+                    $('#console').append('<div class="cmd">'+line+'&nbsp;&nbsp;&nbsp;&nbsp;Meow: "'+sentence+'"</div>')
+                } else {
+                    $('#console').append('<div class="cmd">'+line+'</div>')
+                }
+            })
+            doneCommand()
+        }
     }
 }
 
@@ -229,9 +243,23 @@ function runcommand(command) {
     console.log("Get command:", command)
     for (let prop in law) {
         if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-            law[prop].exec()
+            law[prop].exec(command)
             return;
         }
     }
     doneCommand()
 }
+
+
+var ascii = {
+    cat: ["&nbsp;&nbsp;/\\ ___ /\\"
+         ,"&nbsp;(&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;) "
+         ,"&nbsp;&nbsp;\\&nbsp;&nbsp;>#<&nbsp;&nbsp;/"
+         ,"&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\  "
+         ,"&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^ "
+         ,"|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//"
+         ,"&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// "
+         ,"&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
+
+};
+
