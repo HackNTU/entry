@@ -5,7 +5,7 @@ body {
 #console {
     font-family: courier, monaco, monospace;
     color: #fff;
-    width: 750px;
+    /*width: 750px;*/
     margin-left: auto;
     margin-right: auto;
     margin-top: 100px;
@@ -34,7 +34,7 @@ a {
 }
 
 #command, #password {
-    display: block;
+    display: inline-block;
     background: transparent;
     color: transparent;
     outline: none;
@@ -59,13 +59,17 @@ a {
 }
 
 #cursor {
-    width: 10px;
-    height: 16px;
-    display: inline-block;
-    vertical-align: bottom;
-    background-color: white;
+    /*width: 10px;*/
+    /*height: 16px;*/
+    /*display: inline-block;*/
+    /*vertical-align: bottom;*/
+    /*background-color: white;*/
 }
 
 .cmd {
     margin-top: 8px;
+}
+
+.cmd > span {
+    word-break: break-all;
 }

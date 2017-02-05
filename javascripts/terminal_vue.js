@@ -294,7 +294,7 @@ var law = {
         exec: function() {
             if (confirm("Ready to say goodbye?")) {
                 setInterval(function() {
-                    window.open('about:blank','_self');
+                    window.open('about:blank', '_self');
                 }, 500)
             }
             doneCommand()
@@ -354,9 +354,9 @@ var law = {
             ascii['cat'].forEach((line, idx, array) => {
                 if (idx === 3) {
                     let sentence = command.split(' ').slice(1).join(' ')
-                    $('#console').append('<div class="cmd">'+line+'&nbsp;&nbsp;&nbsp;&nbsp;Meow: "'+sentence+'"</div>')
+                    $('#console').append('<div class="cmd">' + line + '&nbsp;&nbsp;&nbsp;&nbsp;Meow: "' + sentence + '"</div>')
                 } else {
-                    $('#console').append('<div class="cmd">'+line+'</div>')
+                    $('#console').append('<div class="cmd">' + line + '</div>')
                 }
             })
             doneCommand()
@@ -441,36 +441,28 @@ function runcommand(command) {
 
 
 var ascii = {
-    cat: ["&nbsp;&nbsp;/\\ ___ /\\"
-         ,"&nbsp;(&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;) "
-         ,"&nbsp;&nbsp;\\&nbsp;&nbsp;>#<&nbsp;&nbsp;/"
-         ,"&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\  "
-         ,"&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^ "
-         ,"|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//"
-         ,"&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// "
-         ,"&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
-    dog: [  "                                 ,:'/   _...       ",
-            "                                // ( `\"\"-.._.'     ",
-            "                                \\| /    6\\___       /",
-            "                                |     6      4     ",
-            "                                |            /      \\",
-            "                                \\_       .--'      ",
-            "                                (_\'---\'`)          ",
-            "                                / `\'---`()         ",
-            "                              ,\'        |          ",
-            "              ,            .\'`          |          ",
-            "              )\       _.-\'             ;          ",
-            "             / |    .\'`   _            /           ",
-            "           /` /   .\'       '.        , |           ",
-            "          /  /   /           \   ;   | |           ",
-            "          |  \  |            |  .|   | |           ",
-            "           \  `\"|           /.-\' |   | |           ",
-            "            '-..-\       _.;.._  |   |.;-.         ",
-            "                  \    <`.._  )) |  .;-. ))        ",
-            "                  (__.  `  ))-\'  \_    ))'         ",
-            "                      `\'--\"`  jgs  `\"\"\"`           "
-            ]
+    cat: ["&nbsp;&nbsp;/\\ ___ /\\", "&nbsp;(&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;) ", "&nbsp;&nbsp;\\&nbsp;&nbsp;>#<&nbsp;&nbsp;/", "&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\  ", "&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^ ", "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//", "&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// ", "&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
+    dog: ["                                 ,:'/   _...       ",
+        "                                // ( `\"\"-.._.'     ",
+        "                                \\| /    6\\___       /",
+        "                                |     6      4     ",
+        "                                |            /      \\",
+        "                                \\_       .--'      ",
+        "                                (_\'---\'`)          ",
+        "                                / `\'---`()         ",
+        "                              ,\'        |          ",
+        "              ,            .\'`          |          ",
+        "              )\       _.-\'             ;          ",
+        "             / |    .\'`   _            /           ",
+        "           /` /   .\'       '.        , |           ",
+        "          /  /   /           \   ;   | |           ",
+        "          |  \  |            |  .|   | |           ",
+        "           \  `\"|           /.-\' |   | |           ",
+        "            '-..-\       _.;.._  |   |.;-.         ",
+        "                  \    <`.._  )) |  .;-. ))        ",
+        "                  (__.  `  ))-\'  \_    ))'         ",
+        "                      `\'--\"`  jgs  `\"\"\"`           "
+    ]
 
 
 };
-
