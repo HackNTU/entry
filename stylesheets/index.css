@@ -1,0 +1,75 @@
+body {
+    background-color: #000000
+}
+
+#console {
+    font-family: courier, monaco, monospace;
+    color: #fff;
+    /*width: 750px;*/
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    font-size: 14px;
+}
+
+a {
+    color: #0bc;
+    text-decoration: none;
+}
+
+#p-h {
+    color: #0f0;
+}
+
+#p-s {
+    color: #0bc;
+}
+
+#p-d {
+    color: #ff0096;
+}
+
+#p-t {
+    color: #fff94f;
+}
+
+#command, #password {
+    display: inline-block;
+    background: transparent;
+    color: transparent;
+    outline: none;
+    border: none;
+    width: 0px;
+}
+
+.text {
+    background: transparent;
+    outline: none;
+    border: none;
+
+    color: transparent;
+    text-shadow: 0 0 0 white;
+    font-family: courier, monaco, monospace;
+    font-size: 14px;
+
+    &:focus {
+        outline: none;
+    }
+
+}
+
+#cursor {
+    /*width: 10px;*/
+    /*height: 16px;*/
+    /*display: inline-block;*/
+    /*vertical-align: bottom;*/
+    /*background-color: white;*/
+}
+
+.cmd {
+    margin-top: 8px;
+}
+
+.cmd > span {
+    word-break: break-all;
+}
