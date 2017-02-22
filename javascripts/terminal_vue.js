@@ -30,11 +30,12 @@ let Prompt = {
       <span id="p-t"> {{ time }}</span>&nbsp;
       <span id="p-d" > {{ dir }} </span> 
       <span id="p-s">$</span > 
-      <span id="p-text">{{ text }}</span > 
+      <span id="p-text">{{ command.text }}</span > 
       <template id="control" v-if="control">
         <span id="_front" >{{front}}</span><span id="cursor">{{cursorText}}</span ><span id="_back">{{back}}</span >
         <input @keyup.stop.prevent="keyup($event)" type="text" id="command" v-model="input"></input>
       </template>
+      <div>{{command.content}}</div>
     </div >
     `,
     created() {
@@ -56,6 +57,7 @@ let Prompt = {
     props: {
         control: Boolean,
         text: String,
+        content: String,
         index: Number,
     },
     watch: {
@@ -68,6 +70,7 @@ let Prompt = {
     },
     computed: {
         name: () => userLogin.name,
+        // TODO: promptId + this.index
         promptId: () => 'prompt-' + commands.length,
         front() {
             return ((this.cursorIndex < 0) ? this.input.slice(0, this.cursorIndex) : this.input)
@@ -88,10 +91,13 @@ let Prompt = {
         },
         enter() {
             console.log("Enter command:", this.input)
-            commands.push({ 'text': this.input }); // need content
+            let commands = {}
+            command.content = this.$parent.run(this.input)
+            command.text = this.input;
+            commands.push(command);
             // if (this.input.length == 0)
             // return;
-            this.$parent.run(this.input)
+
             this.input = '' //clean input
             this.cursorIndex = 0
         },
@@ -104,7 +110,7 @@ let Prompt = {
             hist_id = hist.length
         },
         prevHistory() {
-            
+
             if (hist_id == hist.length) {
                 prev_command = this.input
             }
@@ -148,7 +154,7 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :text="command.text"></prompt>
+        <prompt :index="index + 1" :text="command.text" :content="command.content"></prompt>
       </template>
       <prompt :index="0" :control="control"></prompt>
     </div>
@@ -187,8 +193,11 @@ let Prompts = new Vue({
             console.log("Get command:", command)
             for (let prop in law) {
                 if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-                    law[prop].exec(command)
-                    return;
+
+                    return law[prop].exec(command);
+
+                    // law[prop].exec(command)
+                    // return;
                 }
             }
             this.done()
@@ -287,14 +296,16 @@ var law = {
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
+            let target = $('<div/>')
             ascii['cat'].forEach((line, idx, array) => {
                 if (idx === 3) {
                     let sentence = command.split(' ').slice(1).join(' ')
-                    $('#console').append('<div class="cmd">' + line + '&nbsp;&nbsp;&nbsp;&nbsp;Meow: "' + sentence + '"</div>')
+                    target.append('<div class="cmd">' + line + '&nbsp;&nbsp;&nbsp;&nbsp;Meow: "' + sentence + '"</div>')
                 } else {
-                    $('#console').append('<div class="cmd">' + line + '</div>')
+                    target.append('<div class="cmd">' + line + '</div>')
                 }
             })
+            return target;
             doneCommand()
         }
     },
@@ -310,7 +321,8 @@ var law = {
                 target += '\n'
             })
             target += "</pre></div>"
-            $('#console').append(target)
+                // $('#console').append(target)
+            return target;
             doneCommand()
         }
     }
