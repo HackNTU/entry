@@ -68,7 +68,7 @@ let Prompt = {
     },
     computed: {
         name: () => userLogin.name,
-        promptId: () => 'prompt-' + this.index,
+        promptId: () => 'prompt-' + commands.length,
         front() {
             return ((this.cursorIndex < 0) ? this.input.slice(0, this.cursorIndex) : this.input)
         },
@@ -87,7 +87,7 @@ let Prompt = {
                 this.cursorIndex += 1
         },
         enter() {
-            console.log("Enter here again")
+            console.log("Enter command:", this.input)
             commands.push({ 'text': this.input }); // need content
             // if (this.input.length == 0)
             // return;
@@ -95,17 +95,46 @@ let Prompt = {
             this.input = '' //clean input
             this.cursorIndex = 0
         },
+        updateHistory() {
+            prev_command = ""
+            if (this.input.length == 0)
+                return;
+
+            hist.push(this.input)
+            hist_id = hist.length
+        },
+        prevHistory() {
+            
+            if (hist_id == hist.length) {
+                prev_command = this.input
+            }
+            if (hist_id > 0) {
+                this.input = hist[hist_id - 1]
+            }
+            hist_id = Math.max(hist_id - 1, 0);
+            console.log("Hist id:", hist_id, "history:", hist, "prev:", prev_command)
+        },
+        nextHistory() {
+            
+            this.input = (hist_id >= hist.length - 1) ? prev_command : hist[hist_id + 1]
+            hist_id = Math.min(hist_id + 1, hist.length)
+            console.log("Hist id:", hist_id, "history:", hist, "prev:", prev_command)
+        },
         keyup(e) {
             switch (e.which) {
-                case 37: // Left
-                    this.moveCursor('left')
-                    break;
-                case 39: // Right
-                    this.moveCursor('right')
-                    break;
-                case 13: // Enter
-                    this.enter()
-                    break;
+                case 37:  // Left
+                    this.moveCursor('left'); break;
+                case 38:  // Up
+                    console.log("Up key!")
+                    this.prevHistory(); break;
+                case 39:  // Right
+                    this.moveCursor('right'); break;
+                case 40:  // Down
+                    console.log("Down key!")
+                    this.nextHistory(); break;
+                case 13:  // Enter
+                    this.updateHistory();
+                    this.enter(); break;
                 default:
                     break;
             }
@@ -174,25 +203,6 @@ let Prompts = new Vue({
 });
 
 
-/*
-function prompt(dir = '~') {
-    let date = new Date()
-    let hr = date.getHours().toString()
-    if (date.getHours() < 10)
-        hr = "0" + hr
-    let min = date.getMinutes().toString()
-    if (date.getMinutes() < 10)
-        min = "0" + min
-    $('#console').append('<div id="prompt" class="cmd"><span id="p-h">' + userLogin.name + '@taipei</span> <span id="p-t">' +
-        hr + ':' + min + '</span>&nbsp;' +
-        '<span id="p-d">' + dir + '</span> <span id="p-s">$</span> <span id="control">' +
-        '<span id="_front"></span><span id="cursor"></span>' +
-        '<input type="text" id="command"></input><span id="_back"></span></span></div>')
-    $('#command').focus()
-    console.log("Prompted.")
-}
-*/
-
 
 $(function() {
     // prompt()
@@ -213,80 +223,6 @@ $(function() {
     });
 });
 
-
-
-/*
-$(document).keyup(function(e) {
-    let front = $('#_front').text()
-    let back = $('#_back').text()
-
-    if (e.which == 37) { // Left
-        if (back.length > 0) {
-            $('#_front').text(front.slice(0, -1))
-            $('#_back').text(front.slice(-1) + back)
-        }
-    } else if (e.which == 38) { // Up
-        if (hist_id > 0) {
-            $('#_front').text(hist[hist_id - 1])
-            $('#_back').text("")
-        }
-        if (hist_id == hist.length) {
-            prev_command = front + back
-        }
-        hist_id = Math.max(hist_id - 1, 0);
-    } else if (e.which == 39) { // Right
-        if (back.length > 0) {
-            $('#_front').text(front + back[0])
-            $('#_back').text(back.slice(1))
-        }
-    } else if (e.which == 40) { // Down
-        if (hist_id < hist.length - 1) {
-            $('#_front').text(hist[hist_id + 1])
-            $('#_back').text("")
-        } else { // Fill in previous command.
-            $('#_front').text(prev_command)
-            $('#_back').text("")
-        }
-        hist_id = Math.min(hist_id + 1, hist.length)
-    } else if (e.which == 13) { // Enter
-        console.log("Enter here again")
-        let com = front + back
-            // Remove old control & rename line id
-        $('#control').remove()
-        $('#prompt').append('<span>' + com + '</span>')
-        $('#prompt').attr('id', 'line-' + hist_id)
-        prev_command = ""
-        if (com.length == 0)
-            return;
-        runcommand(com)
-        hist.push(com)
-        hist_id = hist.length
-    } else if (e.which == 8) { // BackSpace
-        $('#_front').text(front.slice(0, -1))
-        e.preventDefault();
-    } else {
-        $('#_front').text(front + $('#command').val())
-            // console.log("Get input:", $('#command').val())
-        $('#command').val("")
-    }
-
-})
-*/
-
-/*
-$(document).keydown(function(e) {
-    $('#command').focus();
-})
-
-// Blinks the cursor
-setInterval(function() {
-    if ($('#cursor').css('background-color') == 'rgb(255, 255, 255)') {
-        $('#cursor').css('background-color', 'transparent')
-    } else {
-        $('#cursor').css('background-color', 'white')
-    }
-}, 500)
-*/
 
 var law = {
     bye: {
