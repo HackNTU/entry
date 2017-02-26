@@ -21,9 +21,13 @@ Vue.config.devtools = true
 
 /* new var and config [End] */
 
-/*=================================
-=            Ascii art            =
-=================================*/
+
+/*=========================================
+=            Prompt components            =
+=========================================*/
+
+
+/*----------  ASCII Art  ----------*/
 
 var Art = {
     dog: {
@@ -51,12 +55,17 @@ var Art = {
                       \`\'--\"\`  jgs  \`\"\"\"\`          
         </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
         props: {
-            yelp: String,
+            options: Object,
+        },
+        computed: {
+            yelp() {
+                return this.options.yelp;
+            }
         },
     }
 }
 
-/*=====  End of Ascii art  ======*/
+/*=====  End of Prompt components  ======*/
 
 
 let Prompt = {
@@ -71,7 +80,7 @@ let Prompt = {
         <span id="_front" >{{front}}</span><span id="cursor">{{cursorText}}</span ><span id="_back">{{back}}</span >
         <input @keyup.stop.prevent="keyup($event)" type="text" id="command" v-model="input"></input>
       </template>
-      <component v-if="artExist" :is="art" :yelp="'abc'"></component>
+      <component v-if="componentExist" :is="content" :options="options"></component>
     </div >
     `,
     // <div v-html="content"></div>
@@ -87,7 +96,7 @@ let Prompt = {
             // min: '',
             dir: '~',
             time: '10:00', //debug
-            input: 'dog', //test
+            input: 'dog yelp', //test
             cursorIndex: 0,
         }
     },
@@ -96,7 +105,7 @@ let Prompt = {
         text: String,
         content: String,
         index: Number,
-        art: String,
+        options: Object,
     },
     watch: {
         cursorIndex() {
@@ -119,10 +128,9 @@ let Prompt = {
         back() {
             return ((this.cursorIndex < -1) ? this.input.slice(this.cursorIndex + 1) : '')
         },
-        // check art component exist
-        artExist() {
-            // return this.$options.components.hasOwnProperty(this.art)
-            return this.$options.components[this.art] ? true : false
+        // check component exist
+        componentExist() {
+            return this.$options.components[this.content] ? true : false
         },
     },
     methods: {
@@ -135,9 +143,8 @@ let Prompt = {
         enter() {
             console.log("Enter command:", this.input)
             let command = {}
-            command.content = this.$parent.run(this.input)
-            command.text = this.input;
-            command.art = this.input;
+            command = this.$parent.run(this.input)
+
             commands.push(command);
             // if (this.input.length == 0)
             // return;
@@ -201,7 +208,7 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :text="command.text" :content="command.content" :art="command.art"></prompt>
+        <prompt :index="index + 1" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
       <prompt :index="0" :control="control"></prompt>
     </div>
@@ -359,18 +366,28 @@ var law = {
     dog: {
         reg: /^dog.*$/,
         exec: function(command) {
-            let target = "<div class='cmd'><pre>"
-            ascii['dog'].forEach((line, idx, array) => {
-                target += line
-                if (idx === 3) {
-                    target += '&nbsp;&nbsp;' + command.split(' ').slice(1).join(' ')
-                }
-                target += '\n'
-            })
-            target += "</pre></div>"
-                // $('#console').append(target)
-            return target;
+
+            // let target = "<div class='cmd'><pre>"
+            // ascii['dog'].forEach((line, idx, array) => {
+            //     target += line
+            //     if (idx === 3) {
+            //         target += '&nbsp;&nbsp;' + command.split(' ').slice(1).join(' ')
+            //     }
+            //     target += '\n'
+            // })
+            // target += "</pre></div>"
+            //     // $('#console').append(target)
+            // return target;
+            // doneCommand()
+
             doneCommand()
+            return {
+                text: command,
+                content: 'dog',
+                options: {
+                    yelp: command.split(' ').slice(1).join(' '),
+                }
+            }
         }
     }
 }
