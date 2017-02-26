@@ -21,6 +21,42 @@ Vue.config.devtools = true
 
 /* new var and config [End] */
 
+/*=================================
+=            Ascii art            =
+=================================*/
+
+var Art = {
+    dog: {
+        name: 'dog',
+        template: `<div>
+                                 ,:'/   _...      
+                                // ( \`\"\"-.._.'    
+                                \\| /    6\\___       /
+                                |     6      4       {{yelp}}
+                                |            /      \\
+                                \\_       .--'      
+                                (_\'---\'\`)          
+                                / \`\'---\`()         
+                              ,\'        |          
+              ,            .\'\`          |          
+              )\       _.-\'             ;          
+             / |    .\'\`   _            /           
+           /\` /   .\'       '.        , |           
+          /  /   /           \   ;   | |           
+          |  \  |            |  .|   | |           
+           \  \`\"|           /.-\' |   | |           
+            '-..-\       _.;.._  |   |.;-.         
+                  \    <\`.._  )) |  .;-. ))        
+                  (__.  \`  ))-\'  \_    ))'         
+                      \`\'--\"\`  jgs  \`\"\"\"\`          
+        </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+        props: {
+            yelp: String,
+        },
+    }
+}
+
+/*=====  End of Ascii art  ======*/
 
 
 let Prompt = {
@@ -30,14 +66,15 @@ let Prompt = {
       <span id="p-t"> {{ time }}</span>&nbsp;
       <span id="p-d" > {{ dir }} </span> 
       <span id="p-s">$</span > 
-      <span id="p-text">{{ command.text }}</span > 
+      <span id="p-text">{{ text }}</span > 
       <template id="control" v-if="control">
         <span id="_front" >{{front}}</span><span id="cursor">{{cursorText}}</span ><span id="_back">{{back}}</span >
         <input @keyup.stop.prevent="keyup($event)" type="text" id="command" v-model="input"></input>
       </template>
-      <div>{{command.content}}</div>
+      <component v-if="artExist" :is="art" :yelp="'abc'"></component>
     </div >
     `,
+    // <div v-html="content"></div>
     created() {
 
         this.time = new Date().toTimeString().substring(0, 5)
@@ -50,7 +87,7 @@ let Prompt = {
             // min: '',
             dir: '~',
             time: '10:00', //debug
-            input: '123456', //test
+            input: 'dog', //test
             cursorIndex: 0,
         }
     },
@@ -59,6 +96,7 @@ let Prompt = {
         text: String,
         content: String,
         index: Number,
+        art: String,
     },
     watch: {
         cursorIndex() {
@@ -81,6 +119,11 @@ let Prompt = {
         back() {
             return ((this.cursorIndex < -1) ? this.input.slice(this.cursorIndex + 1) : '')
         },
+        // check art component exist
+        artExist() {
+            // return this.$options.components.hasOwnProperty(this.art)
+            return this.$options.components[this.art] ? true : false
+        },
     },
     methods: {
         moveCursor(dir) {
@@ -91,9 +134,10 @@ let Prompt = {
         },
         enter() {
             console.log("Enter command:", this.input)
-            let commands = {}
+            let command = {}
             command.content = this.$parent.run(this.input)
             command.text = this.input;
+            command.art = this.input;
             commands.push(command);
             // if (this.input.length == 0)
             // return;
@@ -145,6 +189,9 @@ let Prompt = {
                     break;
             }
         },
+    },
+    components: {
+        dog: Art.dog,
     }
 }
 
@@ -154,7 +201,7 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :text="command.text" :content="command.content"></prompt>
+        <prompt :index="index + 1" :text="command.text" :content="command.content" :art="command.art"></prompt>
       </template>
       <prompt :index="0" :control="control"></prompt>
     </div>
@@ -296,7 +343,7 @@ var law = {
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
-            let target = $('<div/>')
+            let target = $('<div/>').html()
             ascii['cat'].forEach((line, idx, array) => {
                 if (idx === 3) {
                     let sentence = command.split(' ').slice(1).join(' ')
