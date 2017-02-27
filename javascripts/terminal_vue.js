@@ -52,7 +52,7 @@ var Art = {
             '-..-\       _.;.._  |   |.;-.         
                   \    <\`.._  )) |  .;-. ))        
                   (__.  \`  ))-\'  \_    ))'         
-                      \`\'--\"\`  jgs  \`\"\"\"\`          
+                      \`\'--\"\`       \`\"\"\"\`          
         </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
         props: {
             options: Object,
@@ -109,7 +109,7 @@ let Prompt = {
     created() {
 
         this.time = new Date().toTimeString().substring(0, 5)
-        console.log("Prompted.")
+        console.log("Prompted.", this.time)
 
     },
     data() {
@@ -123,6 +123,7 @@ let Prompt = {
         }
     },
     props: {
+        //time: String,
         control: Boolean,
         text: String,
         content: String,
@@ -163,9 +164,10 @@ let Prompt = {
                 this.cursorIndex += 1
         },
         enter() {
-            console.log("Enter command:", this.input)
+            console.log("Enter command:", this.input, " init @ ", this.time)
             let command = {}
             command = this.$parent.run(this.input)
+            command.time = this.time
 
             commands.push(command);
             // if (this.input.length == 0)
@@ -222,6 +224,16 @@ let Prompt = {
     components: {
         dog: Art.dog,
         cat: Art.cat,
+        default: {
+            name: 'cat',
+            template: `<div>{{ result }}</div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+            props: {
+                options: Object,
+            },
+            computed: {
+                result() { return this.options.result; }
+            },
+        }
     }
 }
 
@@ -231,9 +243,9 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :text="command.text" :content="command.content" :options="command.options"></prompt>
+        <prompt :index="index + 1" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
-      <prompt :index="0" :control="control"></prompt>
+      <prompt :index="0" :time="time" :control="control"></prompt>
     </div>
     `,
     components: {
@@ -253,16 +265,19 @@ let Prompts = new Vue({
         $(document).keydown(function(e) {
             $('#command').focus();
         })
+        this.time = new Date().toTimeString().substring(0, 5)
     },
     data() {
         return {
             dir: '~',
             control: true,
+            time: new Date().toTimeString().substring(0, 5)
         }
     },
     computed: {
         name: () => userLogin.name,
         commands: () => commands,
+        //time: () => (new Date().toTimeString().substring(0, 5)),
     },
     methods: {
         run(command) {
@@ -277,9 +292,18 @@ let Prompts = new Vue({
                     // return;
                 }
             }
+            console.log("Command not found.")
             this.done()
+            return {
+                text: command,
+                content: 'default',
+                options: {
+                    result: "  Command `" + command + "` not found."
+                }
+            }
         },
         done() {
+            this.time = new Date().toTimeString().substring(0, 5)
             this.$nextTick(function() {
                 this.control = true
             })
