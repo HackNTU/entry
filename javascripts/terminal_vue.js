@@ -62,6 +62,28 @@ var Art = {
                 return this.options.yelp;
             }
         },
+    },
+    cat: {
+        name: 'cat',
+        template: `<div>
+              /\\ ___ /\\
+             (  o   o  )            / 
+              \\  >#<  /       Meow: "{{ yelp }}"     
+              /       \\            \\
+             /         \\       ^
+            |           |     //
+             \\         /    //
+              ///  ///   --
+      
+        </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+        props: {
+            options: Object,
+        },
+        computed: {
+            yelp() {
+                return this.options.yelp;
+            }
+        },
     }
 }
 
@@ -199,6 +221,7 @@ let Prompt = {
     },
     components: {
         dog: Art.dog,
+        cat: Art.cat,
     }
 }
 
@@ -350,36 +373,19 @@ var law = {
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
-            let target = $('<div/>').html()
-            ascii['cat'].forEach((line, idx, array) => {
-                if (idx === 3) {
-                    let sentence = command.split(' ').slice(1).join(' ')
-                    target.append('<div class="cmd">' + line + '&nbsp;&nbsp;&nbsp;&nbsp;Meow: "' + sentence + '"</div>')
-                } else {
-                    target.append('<div class="cmd">' + line + '</div>')
-                }
-            })
-            return target;
             doneCommand()
+            return {
+                text: command,
+                content: 'cat',
+                options: {
+                    yelp: command.split(' ').slice(1).join(' '),
+                }
+            }
         }
     },
     dog: {
         reg: /^dog.*$/,
         exec: function(command) {
-
-            // let target = "<div class='cmd'><pre>"
-            // ascii['dog'].forEach((line, idx, array) => {
-            //     target += line
-            //     if (idx === 3) {
-            //         target += '&nbsp;&nbsp;' + command.split(' ').slice(1).join(' ')
-            //     }
-            //     target += '\n'
-            // })
-            // target += "</pre></div>"
-            //     // $('#console').append(target)
-            // return target;
-            // doneCommand()
-
             doneCommand()
             return {
                 text: command,
@@ -437,44 +443,3 @@ function doneCommand() {
     // prompt()
     Prompts.done()
 }
-
-/*
-function runcommand(command) {
-    console.log("Get command:", command)
-    for (let prop in law) {
-        if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-            law[prop].exec(command)
-            return;
-        }
-    }
-    doneCommand()
-}
-*/
-
-
-var ascii = {
-    cat: ["&nbsp;&nbsp;/\\ ___ /\\", "&nbsp;(&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;) ", "&nbsp;&nbsp;\\&nbsp;&nbsp;>#<&nbsp;&nbsp;/", "&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\  ", "&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^ ", "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//", "&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// ", "&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
-    dog: ["                                 ,:'/   _...       ",
-        "                                // ( `\"\"-.._.'     ",
-        "                                \\| /    6\\___       /",
-        "                                |     6      4     ",
-        "                                |            /      \\",
-        "                                \\_       .--'      ",
-        "                                (_\'---\'`)          ",
-        "                                / `\'---`()         ",
-        "                              ,\'        |          ",
-        "              ,            .\'`          |          ",
-        "              )\       _.-\'             ;          ",
-        "             / |    .\'`   _            /           ",
-        "           /` /   .\'       '.        , |           ",
-        "          /  /   /           \   ;   | |           ",
-        "          |  \  |            |  .|   | |           ",
-        "           \  `\"|           /.-\' |   | |           ",
-        "            '-..-\       _.;.._  |   |.;-.         ",
-        "                  \    <`.._  )) |  .;-. ))        ",
-        "                  (__.  `  ))-\'  \_    ))'         ",
-        "                      `\'--\"`  jgs  `\"\"\"`           "
-    ]
-
-
-};
