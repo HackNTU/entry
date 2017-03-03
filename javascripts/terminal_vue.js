@@ -22,6 +22,73 @@ Vue.config.devtools = true
 /* new var and config [End] */
 
 
+/*=========================================
+=            Prompt components            =
+=========================================*/
+
+
+/*----------  ASCII Art  ----------*/
+
+var Art = {
+    dog: {
+        name: 'dog',
+        template: `<div>
+                                 ,:'/   _...      
+                                // ( \`\"\"-.._.'    
+                                \\| /    6\\___       /
+                                |     6      4       {{yelp}}
+                                |            /      \\
+                                \\_       .--'      
+                                (_\'---\'\`)          
+                                / \`\'---\`()         
+                              ,\'        |          
+              ,            .\'\`          |          
+              )\       _.-\'             ;          
+             / |    .\'\`   _            /           
+           /\` /   .\'       '.        , |           
+          /  /   /           \   ;   | |           
+          |  \  |            |  .|   | |           
+           \  \`\"|           /.-\' |   | |           
+            '-..-\       _.;.._  |   |.;-.         
+                  \    <\`.._  )) |  .;-. ))        
+                  (__.  \`  ))-\'  \_    ))'         
+                      \`\'--\"\`       \`\"\"\"\`          
+        </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+        props: {
+            options: Object,
+        },
+        computed: {
+            yelp() {
+                return this.options.yelp;
+            }
+        },
+    },
+    cat: {
+        name: 'cat',
+        template: `<div>
+              /\\ ___ /\\
+             (  o   o  )            / 
+              \\  >#<  /       Meow: "{{ yelp }}"     
+              /       \\            \\
+             /         \\       ^
+            |           |     //
+             \\         /    //
+              ///  ///   --
+      
+        </div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+        props: {
+            options: Object,
+        },
+        computed: {
+            yelp() {
+                return this.options.yelp;
+            }
+        },
+    }
+}
+
+/*=====  End of Prompt components  ======*/
+
 
 let Prompt = {
     template: `
@@ -35,12 +102,14 @@ let Prompt = {
         <span id="_front" >{{front}}</span><span id="cursor">{{cursorText}}</span ><span id="_back">{{back}}</span >
         <input @keyup.stop.prevent="keyup($event)" type="text" id="command" v-model="input"></input>
       </template>
+      <component v-if="componentExist" :is="content" :options="options"></component>
     </div >
     `,
+    // <div v-html="content"></div>
     created() {
 
         this.time = new Date().toTimeString().substring(0, 5)
-        console.log("Prompted.")
+        console.log("Prompted.", this.time)
 
     },
     data() {
@@ -49,14 +118,17 @@ let Prompt = {
             // min: '',
             dir: '~',
             time: '10:00', //debug
-            input: '123456', //test
+            input: 'dog yelp', //test
             cursorIndex: 0,
         }
     },
     props: {
+        //time: String,
         control: Boolean,
         text: String,
+        content: String,
         index: Number,
+        options: Object,
     },
     watch: {
         cursorIndex() {
@@ -68,6 +140,7 @@ let Prompt = {
     },
     computed: {
         name: () => userLogin.name,
+        // TODO: promptId + this.index
         promptId: () => 'prompt-' + commands.length,
         front() {
             return ((this.cursorIndex < 0) ? this.input.slice(0, this.cursorIndex) : this.input)
@@ -78,6 +151,10 @@ let Prompt = {
         back() {
             return ((this.cursorIndex < -1) ? this.input.slice(this.cursorIndex + 1) : '')
         },
+        // check component exist
+        componentExist() {
+            return this.$options.components[this.content] ? true : false
+        },
     },
     methods: {
         moveCursor(dir) {
@@ -87,11 +164,15 @@ let Prompt = {
                 this.cursorIndex += 1
         },
         enter() {
-            console.log("Enter command:", this.input)
-            commands.push({ 'text': this.input }); // need content
+            console.log("Enter command:", this.input, " init @ ", this.time)
+            let command = {}
+            command = this.$parent.run(this.input)
+            command.time = this.time
+
+            commands.push(command);
             // if (this.input.length == 0)
             // return;
-            this.$parent.run(this.input)
+
             this.input = '' //clean input
             this.cursorIndex = 0
         },
@@ -104,7 +185,7 @@ let Prompt = {
             hist_id = hist.length
         },
         prevHistory() {
-            
+
             if (hist_id == hist.length) {
                 prev_command = this.input
             }
@@ -139,6 +220,20 @@ let Prompt = {
                     break;
             }
         },
+    },
+    components: {
+        dog: Art.dog,
+        cat: Art.cat,
+        default: {
+            name: 'cat',
+            template: `<div>{{ result }}</div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
+            props: {
+                options: Object,
+            },
+            computed: {
+                result() { return this.options.result; }
+            },
+        }
     }
 }
 
@@ -148,9 +243,9 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :text="command.text"></prompt>
+        <prompt :index="index + 1" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
-      <prompt :index="0" :control="control"></prompt>
+      <prompt :index="0" :time="time" :control="control"></prompt>
     </div>
     `,
     components: {
@@ -170,16 +265,19 @@ let Prompts = new Vue({
         $(document).keydown(function(e) {
             $('#command').focus();
         })
+        this.time = new Date().toTimeString().substring(0, 5)
     },
     data() {
         return {
             dir: '~',
             control: true,
+            time: new Date().toTimeString().substring(0, 5)
         }
     },
     computed: {
         name: () => userLogin.name,
         commands: () => commands,
+        //time: () => (new Date().toTimeString().substring(0, 5)),
     },
     methods: {
         run(command) {
@@ -187,13 +285,25 @@ let Prompts = new Vue({
             console.log("Get command:", command)
             for (let prop in law) {
                 if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-                    law[prop].exec(command)
-                    return;
+
+                    return law[prop].exec(command);
+
+                    // law[prop].exec(command)
+                    // return;
                 }
             }
+            console.log("Command not found.")
             this.done()
+            return {
+                text: command,
+                content: 'default',
+                options: {
+                    result: "  Command `" + command + "` not found."
+                }
+            }
         },
         done() {
+            this.time = new Date().toTimeString().substring(0, 5)
             this.$nextTick(function() {
                 this.control = true
             })
@@ -287,31 +397,27 @@ var law = {
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
-            ascii['cat'].forEach((line, idx, array) => {
-                if (idx === 3) {
-                    let sentence = command.split(' ').slice(1).join(' ')
-                    $('#console').append('<div class="cmd">' + line + '&nbsp;&nbsp;&nbsp;&nbsp;Meow: "' + sentence + '"</div>')
-                } else {
-                    $('#console').append('<div class="cmd">' + line + '</div>')
-                }
-            })
             doneCommand()
+            return {
+                text: command,
+                content: 'cat',
+                options: {
+                    yelp: command.split(' ').slice(1).join(' '),
+                }
+            }
         }
     },
     dog: {
         reg: /^dog.*$/,
         exec: function(command) {
-            let target = "<div class='cmd'><pre>"
-            ascii['dog'].forEach((line, idx, array) => {
-                target += line
-                if (idx === 3) {
-                    target += '&nbsp;&nbsp;' + command.split(' ').slice(1).join(' ')
-                }
-                target += '\n'
-            })
-            target += "</pre></div>"
-            $('#console').append(target)
             doneCommand()
+            return {
+                text: command,
+                content: 'dog',
+                options: {
+                    yelp: command.split(' ').slice(1).join(' '),
+                }
+            }
         }
     }
 }
@@ -361,44 +467,3 @@ function doneCommand() {
     // prompt()
     Prompts.done()
 }
-
-/*
-function runcommand(command) {
-    console.log("Get command:", command)
-    for (let prop in law) {
-        if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-            law[prop].exec(command)
-            return;
-        }
-    }
-    doneCommand()
-}
-*/
-
-
-var ascii = {
-    cat: ["&nbsp;&nbsp;/\\ ___ /\\", "&nbsp;(&nbsp;&nbsp;o&nbsp;&nbsp;&nbsp;o&nbsp;&nbsp;) ", "&nbsp;&nbsp;\\&nbsp;&nbsp;>#<&nbsp;&nbsp;/", "&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\  ", "&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^ ", "|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;//", "&nbsp;\\&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;// ", "&nbsp;&nbsp;///&nbsp;&nbsp;///&nbsp;&nbsp;--"],
-    dog: ["                                 ,:'/   _...       ",
-        "                                // ( `\"\"-.._.'     ",
-        "                                \\| /    6\\___       /",
-        "                                |     6      4     ",
-        "                                |            /      \\",
-        "                                \\_       .--'      ",
-        "                                (_\'---\'`)          ",
-        "                                / `\'---`()         ",
-        "                              ,\'        |          ",
-        "              ,            .\'`          |          ",
-        "              )\       _.-\'             ;          ",
-        "             / |    .\'`   _            /           ",
-        "           /` /   .\'       '.        , |           ",
-        "          /  /   /           \   ;   | |           ",
-        "          |  \  |            |  .|   | |           ",
-        "           \  `\"|           /.-\' |   | |           ",
-        "            '-..-\       _.;.._  |   |.;-.         ",
-        "                  \    <`.._  )) |  .;-. ))        ",
-        "                  (__.  `  ))-\'  \_    ))'         ",
-        "                      `\'--\"`  jgs  `\"\"\"`           "
-    ]
-
-
-};
