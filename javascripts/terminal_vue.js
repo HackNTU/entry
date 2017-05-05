@@ -196,26 +196,31 @@ let Prompt = {
             console.log("Hist id:", hist_id, "history:", hist, "prev:", prev_command)
         },
         nextHistory() {
-            
+
             this.input = (hist_id >= hist.length - 1) ? prev_command : hist[hist_id + 1]
             hist_id = Math.min(hist_id + 1, hist.length)
             console.log("Hist id:", hist_id, "history:", hist, "prev:", prev_command)
         },
         keyup(e) {
             switch (e.which) {
-                case 37:  // Left
-                    this.moveCursor('left'); break;
-                case 38:  // Up
+                case 37: // Left
+                    this.moveCursor('left');
+                    break;
+                case 38: // Up
                     console.log("Up key!")
-                    this.prevHistory(); break;
-                case 39:  // Right
-                    this.moveCursor('right'); break;
-                case 40:  // Down
+                    this.prevHistory();
+                    break;
+                case 39: // Right
+                    this.moveCursor('right');
+                    break;
+                case 40: // Down
                     console.log("Down key!")
-                    this.nextHistory(); break;
-                case 13:  // Enter
+                    this.nextHistory();
+                    break;
+                case 13: // Enter
                     this.updateHistory();
-                    this.enter(); break;
+                    this.enter();
+                    break;
                 default:
                     break;
             }
@@ -231,7 +236,9 @@ let Prompt = {
                 options: Object,
             },
             computed: {
-                result() { return this.options.result; }
+                result() {
+                    return this.options.result;
+                }
             },
         }
     }
@@ -283,6 +290,10 @@ let Prompts = new Vue({
         run(command) {
             this.control = false
             console.log("Get command:", command)
+            if (command == '') {
+                this.done()
+                return { text: command, content: 'default', options: { result: '' } }
+            }
             for (let prop in law) {
                 if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
 
