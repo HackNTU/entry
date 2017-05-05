@@ -1,6 +1,9 @@
 body {
-    background-color: #000000
+    background-color: #000000;
 }
+
+
+/*TODO: perent bounce on scroll in browser */
 
 #console {
     font-family: courier, monaco, monospace;

@@ -200,6 +200,9 @@ let Prompt = {
             console.log("Hist id:", hist_id, "history:", hist, "prev:", prev_command)
         },
         keyup(e) {
+            // scroll to bottom
+            window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight)
+
             switch (e.which) {
                 case 37: // Left
                     this.moveCursor('left');
@@ -318,7 +321,11 @@ let Prompts = new Vue({
         },
         done() {
             this.$nextTick(function() {
+                // scroll to bottom
+                window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight)
+
                 this.control = true
+
             })
         },
     }
