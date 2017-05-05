@@ -294,9 +294,9 @@ let Prompts = new Vue({
         })
 
         setInterval(() => {
-            // this.time = new Date().toTimeString().substring(0, 5)
-            this.time = new Date().toTimeString().substring(0, 8)
-            console.log('time', this.time)
+            this.time = new Date().toTimeString().substring(0, 5)
+
+            // this.time = new Date().toTimeString().substring(0, 8) //debug
         }, 500)
 
     },
@@ -304,7 +304,7 @@ let Prompts = new Vue({
         return {
             dir: '~',
             control: true,
-            time: '12:00:00', // preview
+            time: new Date().toTimeString().substring(0, 5), // preview
         }
     },
     computed: {
