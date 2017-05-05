@@ -84,6 +84,24 @@ var Art = {
                 return this.options.yelp;
             }
         },
+    },
+    help: {
+        name: 'help',
+        template: `<div v-html="usage"></div>`,
+        props: {
+            options: Object,
+        },
+        computed: {
+            usage() {
+                let help = `
+                Here is all the commands available.
+                -----------------------------------------------------\n`;
+                for (let prop in law) {
+                    help += `                ${prop}: ${law[prop].help}\n`;
+                }
+                return help.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>");
+            }
+        }
     }
 }
 
@@ -227,8 +245,9 @@ let Prompt = {
     components: {
         dog: Art.dog,
         cat: Art.cat,
+        help: Art.help,
         default: {
-            name: 'cat',
+            name: 'default',
             template: `<div>{{ result }}</div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
             props: {
                 options: Object,
@@ -238,7 +257,7 @@ let Prompt = {
                     return this.options.result;
                 }
             },
-        }
+        },
     }
 }
 
@@ -299,11 +318,7 @@ let Prompts = new Vue({
             }
             for (let prop in law) {
                 if (law.hasOwnProperty(prop) && law[prop].reg.test(command)) {
-
                     return law[prop].exec(command);
-
-                    // law[prop].exec(command)
-                    // return;
                 }
             }
             console.log("Command not found.")
@@ -357,7 +372,8 @@ var law = {
                 }, 500)
             }
             doneCommand()
-        }
+        },
+        help: "Honey plz don't leave me....",
     },
     contact: {
         reg: /^contact$/,
@@ -397,15 +413,18 @@ var law = {
                 doneCommand()
             })
 
-        }
+        },
+        help: "Contact us!",
     },
     sudo: {
         reg: /^sudo$/,
-        exec: loginGoogle
+        exec: loginGoogle,
+        help: "Hack me.",
     },
     login: {
         reg: /^login$/,
-        exec: loginGoogle
+        exec: loginGoogle,
+        help: "I wonder what a login user can do.",
     },
     cat: {
         reg: /^cat.*$/,
@@ -418,7 +437,8 @@ var law = {
                     yelp: command.split(' ').slice(1).join(' '),
                 }
             }
-        }
+        },
+        help: "Programmer loves cat, right?",
     },
     dog: {
         reg: /^dog.*$/,
@@ -431,7 +451,19 @@ var law = {
                     yelp: command.split(' ').slice(1).join(' '),
                 }
             }
-        }
+        },
+        help: "No, dog is the best!!!",
+    },
+    help: {
+        reg: /^help$/,
+        exec: (command) => {
+            doneCommand()
+            return {
+                text: command,
+                content: 'help',
+            }
+        },
+        help: "Show this to you!",
     }
 }
 
