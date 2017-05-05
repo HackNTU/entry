@@ -107,8 +107,6 @@ let Prompt = {
     `,
     // <div v-html="content"></div>
     created() {
-
-        this.time = new Date().toTimeString().substring(0, 5)
         console.log("Prompted.", this.time)
 
     },
@@ -117,13 +115,13 @@ let Prompt = {
             // hr: '',
             // min: '',
             dir: '~',
-            time: '10:00', //debug
+            // time: '10:00:00', //debug
             input: 'dog yelp', //test
             cursorIndex: 0,
         }
     },
     props: {
-        //time: String,
+        time: String,
         control: Boolean,
         text: String,
         content: String,
@@ -272,19 +270,24 @@ let Prompts = new Vue({
         $(document).keydown(function(e) {
             $('#command').focus();
         })
-        this.time = new Date().toTimeString().substring(0, 5)
+
+        setInterval(() => {
+            // this.time = new Date().toTimeString().substring(0, 5)
+            this.time = new Date().toTimeString().substring(0, 8)
+            console.log('time', this.time)
+        }, 500)
+
     },
     data() {
         return {
             dir: '~',
             control: true,
-            time: new Date().toTimeString().substring(0, 5)
+            time: '12:00:00', // preview
         }
     },
     computed: {
         name: () => userLogin.name,
         commands: () => commands,
-        //time: () => (new Date().toTimeString().substring(0, 5)),
     },
     methods: {
         run(command) {
@@ -314,7 +317,6 @@ let Prompts = new Vue({
             }
         },
         done() {
-            this.time = new Date().toTimeString().substring(0, 5)
             this.$nextTick(function() {
                 this.control = true
             })
