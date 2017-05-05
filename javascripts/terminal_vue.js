@@ -1,6 +1,7 @@
 let hist = Array()
 let hist_id = 0
 let prev_command = ""
+let major_url = 'https://hackntu.tumblr.com';
 
 /////  Firebase parameters  /////
 const database = firebase.database();
@@ -471,6 +472,13 @@ var law = {
             }
         },
         help: "Show this to you!",
+    },
+    attend: {
+        reg: /(^|.*[ ])(attend|start|go|dev|develop|hack|attend|join|sponsor|install|register)([ ].*|$)/,
+        exec: (command) => {
+            window.location.href = major_url;
+        },
+        help: "Navigate to 2017 Hackathon website!",
     }
 }
 
