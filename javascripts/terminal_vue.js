@@ -103,6 +103,26 @@ var Art = {
                 return help.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>");
             }
         }
+    },
+    login: {
+        name: 'login',
+        template: `<div class="cmd">Welcome, <span id="p-h">{{ name }}</span></div>`,
+        props: { options: Object },
+        computed: {
+            name() {
+                return this.options.name;
+            },
+        }
+    },
+    error: {
+        name: 'error',
+        template: `<div class="error cmd"><span id="p-d">Error! </span>{{ errorMsg }}</div>`,
+        props: { options: Object },
+        computed: {
+            errorMsg() {
+                return this.options.errorMessage
+            },
+        }
     }
 }
 
@@ -494,19 +514,28 @@ function enterSecret() {
     })
 }
 
-function loginGoogle() {
-    firebase.auth().signInWithPopup(provider).then(function(result) {
+async function loginGoogle(command) {
+    var obj;
+    try {
+        var result = await firebase.auth().signInWithPopup(provider);
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = result.credential.accessToken;
         // The signed-in user info.
         var user = result.user;
         // ...
         console.log("Login:", user)
-        $('#console').append('<div class="cmd">Welcome, <span id="p-h">' + user.displayName + '</span></div>')
         userLogin.name = user.displayName
         userLogin.email = user.email
         doneCommand()
-    }).catch(function(error) {
+        return {
+            text: command,
+            content: 'login',
+            options: {
+                name: user.displayName,
+            },
+        };
+    } catch (error) {
+
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -516,10 +545,15 @@ function loginGoogle() {
         var credential = error.credential;
         // ...
         console.log(errorCode, errorMessage)
-        $('#console').append('<div class="error cmd"><span id="p-d">Error! </span>' +
-            errorMessage + '</div>')
         doneCommand()
-    });
+        return {
+            text: command,
+            content: 'error',
+            options: {
+                errorMessage: errorMessage,
+            },
+        };
+    }
 }
 
 
