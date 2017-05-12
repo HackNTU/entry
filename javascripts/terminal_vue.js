@@ -271,6 +271,8 @@ let Prompt = {
         dog: Art.dog,
         cat: Art.cat,
         help: Art.help,
+        login: Art.login,
+        error: Art.error,
         default: {
             name: 'default',
             template: `<div>{{ result }}</div>`.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"),
@@ -294,7 +296,7 @@ let Prompts = new Vue({
       <template v-for="(command, index) in commands">
         <prompt :index="index + 1" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
-      <prompt :index="0" :time="time" :control="control"></prompt>
+      <prompt v-show="control" :index="0" :time="time" :control="control"></prompt>
     </div>
     `,
     components: {
@@ -514,10 +516,15 @@ function enterSecret() {
     })
 }
 
-async function loginGoogle(command) {
-    var obj;
-    try {
-        var result = await firebase.auth().signInWithPopup(provider);
+function loginGoogle(command) {
+
+    let loginResult = {
+        text: command,
+        content: '',
+        options: {},
+    };
+
+    firebase.auth().signInWithPopup(provider).then(result => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = result.credential.accessToken;
         // The signed-in user info.
@@ -526,15 +533,14 @@ async function loginGoogle(command) {
         console.log("Login:", user)
         userLogin.name = user.displayName
         userLogin.email = user.email
+
+        loginResult.content = 'login'
+        loginResult.options = {
+            name: user.displayName,
+        }
+
         doneCommand()
-        return {
-            text: command,
-            content: 'login',
-            options: {
-                name: user.displayName,
-            },
-        };
-    } catch (error) {
+    }).catch((error) => {
 
         // Handle Errors here.
         var errorCode = error.code;
@@ -545,15 +551,16 @@ async function loginGoogle(command) {
         var credential = error.credential;
         // ...
         console.log(errorCode, errorMessage)
+
+        loginResult.content = 'error'
+        loginResult.options = {
+            errorMessage,
+        }
         doneCommand()
-        return {
-            text: command,
-            content: 'error',
-            options: {
-                errorMessage: errorMessage,
-            },
-        };
-    }
+
+    })
+
+    return loginResult;
 }
 
 
