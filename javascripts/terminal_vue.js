@@ -118,7 +118,7 @@ let Prompt = {
       <span id="p-s">$</span > 
       <span id="p-text">{{ text }}</span > 
       <template id="control" v-if="control">
-        <span id="_front" >{{front}}</span><span id="cursor">{{cursorText}}</span ><span id="_back">{{back}}</span >
+        <span id="_front" >{{front}}</span><span id="cursor" v-html="cursorText"></span><span id="_back">{{back}}</span >
         <input @keyup.stop.prevent="keyup($event)" type="text" id="command" v-model="input"></input>
       </template>
       <component v-if="componentExist" :is="content" :options="options"></component>
@@ -163,7 +163,8 @@ let Prompt = {
             return ((this.cursorIndex < 0) ? this.input.slice(0, this.cursorIndex) : this.input)
         },
         cursorText() {
-            return ((this.cursorIndex < 0) ? this.input.substr((this.cursorIndex), 1) : ' ')
+            console.log('HERE:', this.input.length > 0 && this.cursorIndex < 0)
+            return ((this.input.length > 0 && this.cursorIndex < 0) ? this.input.substr((this.cursorIndex), 1) : '&nbsp;')
         },
         back() {
             return ((this.cursorIndex < -1) ? this.input.slice(this.cursorIndex + 1) : '')
