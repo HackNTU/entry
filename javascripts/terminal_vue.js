@@ -104,6 +104,28 @@ var Art = {
             }
         }
     },
+    loading: {
+        name: 'loading',
+        template: `<div class="cmd"> Loading{{dots}} </div>`,
+        created() {
+            this.timer = setInterval(() => {
+                this.dots = this.dots.length < 20 ? this.dots + '.' : '.'
+            }, 800)
+        },
+        props: { options: Object },
+        data() {
+            return {
+                dots: '.',
+                timer: '',
+            };
+        },
+        computed: {
+
+        },
+        beforeDestroy() {
+            this.timer = clearInterval(this.timer)
+        },
+    },
     login: {
         name: 'login',
         template: `<div class="cmd">Welcome, <span id="p-h">{{ name }}</span></div>`,
@@ -111,6 +133,9 @@ var Art = {
         computed: {
             name() {
                 return this.options.name;
+            },
+            progress() {
+                return this.options.progress;
             },
         }
     },
@@ -271,6 +296,7 @@ let Prompt = {
         dog: Art.dog,
         cat: Art.cat,
         help: Art.help,
+        loading: Art.loading,
         login: Art.login,
         error: Art.error,
         default: {
@@ -520,7 +546,7 @@ function loginGoogle(command) {
 
     let loginResult = {
         text: command,
-        content: '',
+        content: 'loading',
         options: {},
     };
 
