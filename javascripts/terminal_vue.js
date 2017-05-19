@@ -106,11 +106,11 @@ var Art = {
     },
     loading: {
         name: 'loading',
-        template: `<div class="cmd"> Loading{{dots}} </div>`,
+        template: `<div class="cmd">[{{spinner}}] Loading{{dots}} </div>`,
         created() {
             this.timer = setInterval(() => {
                 this.dots = this.dots.length < 20 ? this.dots + '.' : '.'
-            }, 800)
+            }, 300)
         },
         props: { options: Object },
         data() {
@@ -120,7 +120,9 @@ var Art = {
             };
         },
         computed: {
-
+            spinner() {
+                return '|/-\\'.split('')[this.dots.length % 4];
+            },
         },
         beforeDestroy() {
             this.timer = clearInterval(this.timer)
