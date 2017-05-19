@@ -94,13 +94,13 @@ var Art = {
         },
         computed: {
             usage() {
-                let help = `
+                let help = `<pre>
                 Here is all the commands available.
                 -----------------------------------------------------\n`;
                 for (let prop in law) {
-                    help += `                ${prop}: ${law[prop].help}\n`;
+                    help += `                <span class='p-s'>${prop}</span>: ${law[prop].help}\n`;
                 }
-                return help.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>");
+                return help + '</pre>';
             }
         }
     },
@@ -130,7 +130,7 @@ var Art = {
     },
     login: {
         name: 'login',
-        template: `<div class="cmd">Welcome, <span id="p-h">{{ name }}</span></div>`,
+        template: `<div class="cmd">Welcome, <span class="p-h">{{ name }}</span></div>`,
         props: { options: Object },
         computed: {
             name() {
@@ -150,7 +150,7 @@ var Art = {
     },
     error: {
         name: 'error',
-        template: `<div class="error cmd"><span id="p-d">Error! </span>{{ errorMsg }}</div>`,
+        template: `<div class="error cmd"><span class="p-d">Error! </span>{{ errorMsg }}</div>`,
         props: { options: Object },
         computed: {
             errorMsg() {
@@ -166,10 +166,10 @@ var Art = {
 let Prompt = {
     template: `
     <div :id="promptId" class="cmd">
-      <span id="p-h">{{ name }}@taipei</span>
-      <span id="p-t"> {{ time }}</span>&nbsp;
-      <span id="p-d" > {{ dir }} </span> 
-      <span id="p-s">$</span > 
+      <span class="p-h">{{ name }}@taipei</span>
+      <span class="p-t"> {{ time }}</span>&nbsp;
+      <span class="p-d"> {{ dir }} </span> 
+      <span class="p-s">$</span > 
       <span id="p-text">{{ text }}</span > 
       <template id="control" v-if="control">
         <span id="_front" >{{front}}</span><span id="cursor" v-html="cursorText"></span><span id="_back">{{back}}</span >
