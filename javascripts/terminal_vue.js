@@ -141,6 +141,13 @@ var Art = {
             },
         }
     },
+    contact: {
+        name: 'contact',
+        template: `<div>
+        \>\> Hey bro, feel free to 
+        <a href="mailto:hackntu@gmail.com?subject=[Contact from website]">email Us!</a>
+        </div>`,
+    },
     error: {
         name: 'error',
         template: `<div class="error cmd"><span id="p-d">Error! </span>{{ errorMsg }}</div>`,
@@ -300,6 +307,7 @@ let Prompt = {
         help: Art.help,
         loading: Art.loading,
         login: Art.login,
+        contact: Art.contact,
         error: Art.error,
         default: {
             name: 'default',
@@ -436,42 +444,12 @@ var law = {
     },
     contact: {
         reg: /^contact$/,
-        exec: function() {
-            function loadUserMeta(meta, column, regex) {
-                return new Promise((resolve, reject) => {
-                    $('#console').append('<div class="interactive cmd">' + column +
-                        ': <input type="text" id="meta" class="text"></input></div>')
-                    $('#meta').focus().keyup(function(e) {
-                        // Avoids enter been interpreted by document event handler.
-                        e.stopPropagation();
-                        if (e.which == 13) {
-                            if (regex.test($('#meta').val())) {
-                                meta[column] = $('#meta').val()
-                                console.log("Load!!!!!", $('#meta').val())
-                                resolve(meta)
-                                $('#meta').attr('id', '');
-                            } else {
-                                $('#console').append('<div class="error cmd">Illegal input of ' + column + '</div>')
-                                reject("Illegal input")
-                            }
-                        }
-                    })
-                })
+        exec: function(command) {
+            doneCommand();
+            return {
+                text: command,
+                content: 'contact',
             };
-
-            loadUserMeta({}, "name", /^.*$/).then(obj => {
-                return loadUserMeta(obj, "email", emailregex)
-            }).then(obj => {
-                return loadUserMeta(obj, "quote", /^.*$/)
-            }).then(obj => { // Done loading user data
-                console.log(obj)
-                database.ref().child('contact').push().set(obj);
-                doneCommand()
-            }).catch(error => {
-                console.log(error)
-                doneCommand()
-            })
-
         },
         help: "Contact us!",
     },
