@@ -11,7 +11,7 @@ body {
     /*width: 750px;*/
     margin-left: auto;
     margin-right: auto;
-    margin-top: 100px;
+    margin-top: 10px;
     font-size: 14px;
 }
 
@@ -36,7 +36,8 @@ a {
     color: #fff94f;
 }
 
-#command, #password {
+#command,
+#password {
     display: inline-block;
     background: transparent;
     color: transparent;
@@ -49,16 +50,13 @@ a {
     background: transparent;
     outline: none;
     border: none;
-
     color: transparent;
     text-shadow: 0 0 0 white;
     font-family: courier, monaco, monospace;
     font-size: 14px;
-
     &:focus {
         outline: none;
     }
-
 }
 
 #cursor {
