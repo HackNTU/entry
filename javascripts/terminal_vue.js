@@ -7,7 +7,8 @@ let major_url = 'https://hackntu.tumblr.com';
 const database = firebase.database();
 const provider = new firebase.auth.GoogleAuthProvider();
 //provider.addScope('https://www.googleapis.com/auth/plus.login');
-const userLogin = { name: "hackntu" }
+const rootUser = { name: 'hackntu' }
+const userLogin = { name: '', email: '' }
 
 const emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
@@ -194,6 +195,7 @@ let Prompt = {
         }
     },
     props: {
+        name: String,
         time: String,
         control: Boolean,
         text: String,
@@ -210,7 +212,6 @@ let Prompt = {
         },
     },
     computed: {
-        name: () => userLogin.name,
         // TODO: promptId + this.index
         promptId: () => 'prompt-' + commands.length,
         front() {
@@ -240,6 +241,7 @@ let Prompt = {
             let command = {}
             command = this.$parent.run(this.input)
             command.time = this.time
+            command.name = this.name
 
             commands.push(command);
             // if (this.input.length == 0)
@@ -330,9 +332,9 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
+        <prompt :index="index + 1" :name="command.name" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
-      <prompt v-show="control" :index="0" :time="time" :control="control"></prompt>
+      <prompt v-show="control" :index="0" :time="time" :control="control" :name="name"></prompt>
     </div>
     `,
     components: {
@@ -364,11 +366,11 @@ let Prompts = new Vue({
         return {
             dir: '~',
             control: true,
+            name: rootUser.name,
             time: new Date().toTimeString().substring(0, 5), // preview
         }
     },
     computed: {
-        name: () => userLogin.name,
         commands: () => commands,
     },
     methods: {
@@ -539,6 +541,9 @@ function loginGoogle(command) {
         console.log("Login:", user)
         userLogin.name = user.displayName
         userLogin.email = user.email
+
+        // Prompts.email = user.email
+        Prompts.name = user.displayName
 
         loginResult.content = 'login'
         loginResult.options = {
