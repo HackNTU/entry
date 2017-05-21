@@ -465,6 +465,30 @@ var law = {
         exec: loginGoogle,
         help: "I wonder what a login user can do.",
     },
+    exit: {
+        reg: /^exit$/,
+        exec: function(command) {
+            let result = ''
+            console.log('userLogin.name.length', userLogin.name.length)
+            if (userLogin.name.length) {
+                userLogin.name = ''
+                userLogin.email = ''
+                Prompts.name = rootUser.name
+                result = 'Saving history...... logout completed.'
+            } else {
+                result = 'No need to logout, not logged in.'
+            }
+            doneCommand()
+            return {
+                text: command,
+                content: 'default',
+                options: {
+                    result,
+                }
+            }
+        },
+        // help: "",
+    },
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
