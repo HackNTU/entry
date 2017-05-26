@@ -189,7 +189,7 @@ let Prompt = {
             // min: '',
             dir: '~',
             // time: '10:00:00', //debug
-            input: 'dog yelp', //test
+            input: '', //test
             cursorIndex: 0,
         }
     },
