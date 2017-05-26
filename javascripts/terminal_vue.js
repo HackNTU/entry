@@ -7,7 +7,8 @@ let major_url = 'https://hackntu.tumblr.com';
 const database = firebase.database();
 const provider = new firebase.auth.GoogleAuthProvider();
 //provider.addScope('https://www.googleapis.com/auth/plus.login');
-const userLogin = { name: "hackntu" }
+const rootUser = { name: 'hackntu' }
+const userLogin = { name: '', email: '' }
 
 const emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
@@ -94,13 +95,13 @@ var Art = {
         },
         computed: {
             usage() {
-                let help = `
+                let help = `<pre>
                 Here is all the commands available.
                 -----------------------------------------------------\n`;
                 for (let prop in law) {
-                    help += `                ${prop}: ${law[prop].help}\n`;
+                    help += `                <span class='p-s'>${prop}</span>: ${law[prop].help}\n`;
                 }
-                return help.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>");
+                return help + '</pre>';
             }
         }
     },
@@ -130,7 +131,7 @@ var Art = {
     },
     login: {
         name: 'login',
-        template: `<div class="cmd">Welcome, <span id="p-h">{{ name }}</span></div>`,
+        template: `<div class="cmd">Welcome, <span class="p-h">{{ name }}</span></div>`,
         props: { options: Object },
         computed: {
             name() {
@@ -150,7 +151,7 @@ var Art = {
     },
     error: {
         name: 'error',
-        template: `<div class="error cmd"><span id="p-d">Error! </span>{{ errorMsg }}</div>`,
+        template: `<div class="error cmd"><span class="p-d">Error! </span>{{ errorMsg }}</div>`,
         props: { options: Object },
         computed: {
             errorMsg() {
@@ -166,10 +167,10 @@ var Art = {
 let Prompt = {
     template: `
     <div :id="promptId" class="cmd">
-      <span id="p-h">{{ name }}@taipei</span>
-      <span id="p-t"> {{ time }}</span>&nbsp;
-      <span id="p-d" > {{ dir }} </span> 
-      <span id="p-s">$</span > 
+      <span class="p-h">{{ name }}@taipei</span>
+      <span class="p-t"> {{ time }}</span>&nbsp;
+      <span class="p-d"> {{ dir }} </span> 
+      <span class="p-s">$</span > 
       <span id="p-text">{{ text }}</span > 
       <template id="control" v-if="control">
         <span id="_front" >{{front}}</span><span id="cursor" v-html="cursorText"></span><span id="_back">{{back}}</span >
@@ -194,6 +195,7 @@ let Prompt = {
         }
     },
     props: {
+        name: String,
         time: String,
         control: Boolean,
         text: String,
@@ -210,7 +212,6 @@ let Prompt = {
         },
     },
     computed: {
-        name: () => userLogin.name,
         // TODO: promptId + this.index
         promptId: () => 'prompt-' + commands.length,
         front() {
@@ -240,6 +241,7 @@ let Prompt = {
             let command = {}
             command = this.$parent.run(this.input)
             command.time = this.time
+            command.name = this.name
 
             commands.push(command);
             // if (this.input.length == 0)
@@ -330,9 +332,9 @@ let Prompts = new Vue({
     template: `
     <div id="console">
       <template v-for="(command, index) in commands">
-        <prompt :index="index + 1" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
+        <prompt :index="index + 1" :name="command.name" :time="command.time" :text="command.text" :content="command.content" :options="command.options"></prompt>
       </template>
-      <prompt v-show="control" :index="0" :time="time" :control="control"></prompt>
+      <prompt v-show="control" :index="0" :time="time" :control="control" :name="name"></prompt>
     </div>
     `,
     components: {
@@ -364,11 +366,11 @@ let Prompts = new Vue({
         return {
             dir: '~',
             control: true,
+            name: rootUser.name,
             time: new Date().toTimeString().substring(0, 5), // preview
         }
     },
     computed: {
-        name: () => userLogin.name,
         commands: () => commands,
     },
     methods: {
@@ -463,6 +465,30 @@ var law = {
         exec: loginGoogle,
         help: "I wonder what a login user can do.",
     },
+    exit: {
+        reg: /^exit$/,
+        exec: function(command) {
+            let result = ''
+            console.log('userLogin.name.length', userLogin.name.length)
+            if (userLogin.name.length) {
+                userLogin.name = ''
+                userLogin.email = ''
+                Prompts.name = rootUser.name
+                result = 'Saving history...... logout completed.'
+            } else {
+                result = 'No need to logout, not logged in.'
+            }
+            doneCommand()
+            return {
+                text: command,
+                content: 'default',
+                options: {
+                    result,
+                }
+            }
+        },
+        // help: "",
+    },
     cat: {
         reg: /^cat.*$/,
         exec: function(command) {
@@ -539,6 +565,9 @@ function loginGoogle(command) {
         console.log("Login:", user)
         userLogin.name = user.displayName
         userLogin.email = user.email
+
+        // Prompts.email = user.email
+        Prompts.name = user.displayName
 
         loginResult.content = 'login'
         loginResult.options = {
