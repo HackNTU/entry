@@ -1,7 +1,7 @@
 let hist = Array()
 let hist_id = 0
 let prev_command = ""
-let major_url = 'https://hackntu.tumblr.com';
+let major_url = 'http://major.hackntu.taipei';
 
 /////  Firebase parameters  /////
 const database = firebase.database();
