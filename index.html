@@ -38,9 +38,18 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="javascripts/typed.min.js"></script>
-    <<script src="javascripts/header.js"></script>
-        <!-- <script src="javascripts/terminal.js"></script> -->
-        <script src="javascripts/terminal_vue.js"></script>
+    <script src="javascripts/header.js"></script>
+    <!-- <script src="javascripts/terminal.js"></script> -->
+    <script src="javascripts/terminal_vue.js"></script>
+    <script>
+    setTimeout(function() {
+        if (confirm('是否前往【2017 臺大黑客松活動】官網？')) {
+            window.location.href = 'http://major.hackntu.taipei'
+        } else {
+            console.log('stay here')
+        }
+    }, 1000)
+    </script>
 </body>
 
 </html>
